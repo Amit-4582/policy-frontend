@@ -18,7 +18,7 @@ import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 
 import { useDispatch, useSelector } from "react-redux";
-import { createPolicy } from "../../../features/policy-detail-module/policyActions";
+import { createPolicy, getAllPolicyDetails } from "../../../features/policy-detail-module/policyActions";
 import { toast } from "react-hot-toast";
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
@@ -322,6 +322,7 @@ const AddEditPolicyDialog = ({ open, onClose, policy }) => {
       };
 
       await dispatch(createPolicy(policyData)).unwrap();
+      await dispatch(getAllPolicyDetails({ page: 1, limit: 10 })).unwrap();
       onClose();
     } catch (error) {
       toast.error(error.message || "Failed to create policy");
