@@ -87,7 +87,7 @@ const PolicyManagementTable = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [page, setPage] = useState(pagination?.currentPage || 1);
   const [pageSize, setPageSize] = useState(pagination?.itemsPerPage || 5);
-  const [selectedPolicyId, setSelectedPolicyId] = useState(null); // State to track selected policy
+  const [selectedPolicyId, setSelectedPolicyId] = useState(null); 
 
   // Fetch policies when component mounts or page changes
   useEffect(() => {
