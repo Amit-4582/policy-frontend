@@ -1,12 +1,23 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "@mui/material/styles";
-import { TextField, Button, Box, Typography, Container, InputAdornment, IconButton } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Container,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { useDispatch } from "react-redux";
+import { toast } from "react-hot-toast";
+import { signUpUser } from "../../features/authentication-module/authActions";
 
-// Styled container for the login page
-const LoginContainer = styled(Container)(({ theme }) => ({
+// Styled container for the signup page
+const SignUpContainer = styled(Container)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
@@ -46,33 +57,46 @@ const ErrorMessage = styled(Typography)(({ theme }) => ({
 }));
 
 const LoginPage = () => {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
     mode: "onBlur",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
 
   const handleTogglePassword = () => {
     setShowPassword((prev) => !prev);
   };
 
   const handleReset = () => {
-    reset(); // Resets form fields and validation messages
+    reset();
   };
 
-  const onSubmit = (data) => {
-    console.log("Form submitted:", data);
-    // Handle login logic here
+  const onSubmit = async (data) => {
+    try {
+      const result = await dispatch(signUpUser(data)).unwrap();
+      if (result.success) {
+        toast.success("Sign up successful!");
+        reset();
+      }
+    } catch (error) {
+      console.log("Error ", error);
+    }
   };
 
   return (
-    <LoginContainer>
+    <SignUpContainer>
       <FormWrapper>
         <Typography
           variant="h4"
           align="center"
           sx={{ fontWeight: "bold", color: "#1e293b", mb: 4 }}
         >
-          Welcome!
+          Create Account
         </Typography>
         <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
           <TextField
@@ -81,8 +105,8 @@ const LoginPage = () => {
             variant="outlined"
             margin="normal"
             type="email"
-            error={!!errors.email}
-            {...register("email", {
+            error={!!errors.emailId}
+            {...register("emailId", {
               required: "Email is required",
               pattern: {
                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -101,7 +125,9 @@ const LoginPage = () => {
               },
             }}
           />
-          {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
+          {errors.emailId && (
+            <ErrorMessage>{errors.emailId.message}</ErrorMessage>
+          )}
 
           <TextField
             fullWidth
@@ -142,7 +168,9 @@ const LoginPage = () => {
               },
             }}
           />
-          {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
+          {errors.password && (
+            <ErrorMessage>{errors.password.message}</ErrorMessage>
+          )}
 
           <ButtonContainer>
             <Button
@@ -177,12 +205,12 @@ const LoginPage = () => {
                 },
               }}
             >
-              Sign In
+              Sign Up
             </Button>
           </ButtonContainer>
         </Box>
       </FormWrapper>
-    </LoginContainer>
+    </SignUpContainer>
   );
 };
 
