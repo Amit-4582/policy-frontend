@@ -209,6 +209,9 @@ const Layout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  const userName = userData?.name;
+
   const handleDrawerToggle = () => {
     setOpen(!open);
   };
@@ -222,9 +225,13 @@ const Layout = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logout()); 
+    localStorage.removeItem("userData");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    dispatch(logout());
+
     handleMenuClose();
-    navigate("/login"); 
+    navigate("/login");
   };
 
   const getPageTitle = () => {
@@ -417,7 +424,7 @@ const Layout = () => {
               }}
             >
               <Typography variant="subtitle1" fontWeight="bold">
-                John Doe
+                {userName}
               </Typography>
             </MenuItem>
             <Divider sx={{ my: 0.5 }} />

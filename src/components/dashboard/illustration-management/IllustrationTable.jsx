@@ -6,10 +6,16 @@ import {
   Stack,
   useTheme,
   useMediaQuery,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -77,6 +83,7 @@ const IllustrationTable = ({ policyId }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { policies } = useSelector((state) => state.policy);
   const [illustrationData, setIllustrationData] = useState([]);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   useEffect(() => {
     if (policyId) {
@@ -199,6 +206,55 @@ const IllustrationTable = ({ policyId }) => {
     },
   ];
 
+  const handleExportClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    const tableColumn = columns.map((col) => col.headerName);
+    const tableRows = illustrationData.map((row) =>
+      columns.map((col) => row[col.field])
+    );
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      theme: "grid",
+      styles: { fontSize: 10, cellPadding: 2 },
+      headStyles: { fillColor: [191, 8, 251], textColor: [255, 255, 255] },
+    });
+    doc.save("illustration.pdf");
+    handleClose();
+  };
+
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(
+      illustrationData.map((row) =>
+        columns.reduce((obj, col) => {
+          obj[col.headerName] = row[col.field];
+          return obj;
+        }, {})
+      )
+    );
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Illustration");
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    saveAs(
+      new Blob([excelBuffer], { type: "application/octet-stream" }),
+      "illustration.xlsx"
+    );
+    handleClose();
+  };
+
   return (
     <StyledBox>
       <Stack
@@ -214,13 +270,31 @@ const IllustrationTable = ({ policyId }) => {
         >
           Illustration
         </Typography>
-        <StyledButton
-          variant="contained"
-          disabled={!policyId}
-          onClick={() => alert("Export functionality can be added here")}
-        >
-          Export
-        </StyledButton>
+        <div>
+          <StyledButton
+            variant="contained"
+            disabled={!policyId}
+            onClick={handleExportClick}
+          >
+            Export
+          </StyledButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+          >
+            <MenuItem onClick={exportToPDF}>Export to PDF</MenuItem>
+            <MenuItem onClick={exportToExcel}>Export to Excel</MenuItem>
+          </Menu>
+        </div>
       </Stack>
       <ScrollableContainer>
         <DataGrid
