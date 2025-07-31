@@ -11,9 +11,9 @@ function isAxiosError(error) {
   return error.isAxiosError !== undefined;
 }
 
-// SIGNUP USER ACTION
-export const signUpUser = createAsyncThunk(
-  "auth/signUpUser",
+// LOGIN USER ACTION
+export const loginUser = createAsyncThunk(
+  "auth/loginUser",
   async (userData, { rejectWithValue, dispatch }) => {
     if (!userData.emailId) {
       toast.error("Email Id is required.");
@@ -22,7 +22,7 @@ export const signUpUser = createAsyncThunk(
 
     try {
       const response = await createApiClient.post(
-        "/auth/signup-user",
+        "/auth/login-user",
         userData
       );
 
@@ -40,7 +40,47 @@ export const signUpUser = createAsyncThunk(
 
         return response.data;
       } else {
-        toast.error(response.data.message || "Sign up failed");
+        toast.error(response.data.message || "Login failed");
+        return rejectWithValue(response.data.message);
+      }
+    } catch (error) {
+      let errorMessage = "An unknown error occurred";
+
+      if (isAxiosError(error) && error.response) {
+        errorMessage = error.response.data.message || "Unknown error";
+        if (error.response.status === 401) {
+          tokenExpiration();
+          errorMessage = "Session expired";
+        }
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
+      toast.error(errorMessage);
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
+// REGISTER USER ACTION
+export const registerUser = createAsyncThunk(
+  "auth/registerUser",
+  async (userData, { rejectWithValue, dispatch }) => {
+    if (!userData.emailId || !userData.name || !userData.dob || !userData.contactNo || !userData.password) {
+      toast.error("All fields are required.");
+      return rejectWithValue("All fields are required.");
+    }
+
+    try {
+      const response = await createApiClient.post(
+        "/auth/register-user",
+        userData
+      );
+
+      if (response.data.success) {
+        return response.data;
+      } else {
+        toast.error(response.data.message || "Registration failed");
         return rejectWithValue(response.data.message);
       }
     } catch (error) {

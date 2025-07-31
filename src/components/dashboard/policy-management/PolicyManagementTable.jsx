@@ -14,7 +14,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { toast } from "react-hot-toast";
 
 import AddEditPolicyDialog from "./AddEditPolicyDialog";
-
+import IllustrationTable from "../illustration-management/IllustrationTable";
 import { getAllPolicyDetails } from "../../../features/policy-detail-module/policyActions";
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -85,8 +85,9 @@ const PolicyManagementTable = () => {
     (state) => state.policy
   );
   const [openDialog, setOpenDialog] = useState(false);
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [page, setPage] = useState(pagination?.currentPage || 1);
+  const [pageSize, setPageSize] = useState(pagination?.itemsPerPage || 5);
+  const [selectedPolicyId, setSelectedPolicyId] = useState(null); // State to track selected policy
 
   // Fetch policies when component mounts or page changes
   useEffect(() => {
@@ -121,7 +122,7 @@ const PolicyManagementTable = () => {
       flex: 1,
       minWidth: 120,
       renderCell: (params) => (
-        <Typography variant="body2" color="text.primary">
+        <Typography variant="body2" color="text.primary" mt={2}>
           {params.value}
         </Typography>
       ),
@@ -132,7 +133,7 @@ const PolicyManagementTable = () => {
       flex: 1,
       minWidth: 100,
       renderCell: (params) => (
-        <Typography variant="body2" color="text.primary">
+        <Typography variant="body2" color="text.primary" mt={2}>
           {params.value}
         </Typography>
       ),
@@ -143,7 +144,7 @@ const PolicyManagementTable = () => {
       flex: 1,
       minWidth: 150,
       renderCell: (params) => (
-        <Typography variant="body2" color="text.primary">
+        <Typography variant="body2" color="text.primary" mt={2}>
           {params.value}
         </Typography>
       ),
@@ -154,7 +155,7 @@ const PolicyManagementTable = () => {
       flex: 1,
       minWidth: 150,
       renderCell: (params) => (
-        <Typography variant="body2" color="text.primary">
+        <Typography variant="body2" color="text.primary" mt={2}>
           {params.value}
         </Typography>
       ),
@@ -165,7 +166,7 @@ const PolicyManagementTable = () => {
       flex: 1,
       minWidth: 150,
       renderCell: (params) => (
-        <Typography variant="body2" color="text.primary">
+        <Typography variant="body2" color="text.primary" mt={2}>
           {params.value}
         </Typography>
       ),
@@ -176,7 +177,7 @@ const PolicyManagementTable = () => {
       flex: 1,
       minWidth: 100,
       renderCell: (params) => (
-        <Typography variant="body2" color="text.primary">
+        <Typography variant="body2" color="text.primary" mt={2}>
           {params.value}
         </Typography>
       ),
@@ -187,9 +188,24 @@ const PolicyManagementTable = () => {
       flex: 1,
       minWidth: 100,
       renderCell: (params) => (
-        <Typography variant="body2" color="text.primary">
+        <Typography variant="body2" color="text.primary" mt={2}>
           {params.value}
         </Typography>
+      ),
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => (
+        <StyledButton
+          variant="contained"
+          size="small"
+          onClick={() => setSelectedPolicyId(params.id)}
+        >
+          Illustrate
+        </StyledButton>
       ),
     },
   ];
@@ -230,16 +246,18 @@ const PolicyManagementTable = () => {
       <ScrollableContainer>
         <DataGrid
           autoHeight
-          rows={formatPolicies(apiPolicies || [])}
+          rows={formatPolicies(apiPolicies)}
           columns={columns}
-          pageSizeOptions={[5, 10]}
+          pageSizeOptions={[5, 10, 20]}
           pagination
-          initialState={{
-            pagination: { paginationModel: { page: page - 1, pageSize } },
-          }}
           paginationMode="server"
-          rowCount={pagination?.total || 0}
+          rowCount={pagination?.totalItems || 0}
           loading={loading}
+          initialState={{
+            pagination: {
+              paginationModel: { page: page - 1, pageSize },
+            },
+          }}
           onPaginationModelChange={handlePageChange}
           disableRowSelectionOnClick
           sx={{
@@ -258,7 +276,7 @@ const PolicyManagementTable = () => {
               zIndex: 1,
             },
             "& .MuiDataGrid-cell": {
-              padding: theme.spacing(2),
+              padding: theme.spacing(),
               borderBottom: `1px solid ${theme.palette.grey[100]}`,
               color: theme.palette.text.primary,
               whiteSpace: "nowrap",
@@ -294,6 +312,7 @@ const PolicyManagementTable = () => {
         open={openDialog}
         onClose={() => setOpenDialog(false)}
       />
+      {selectedPolicyId && <IllustrationTable policyId={selectedPolicyId} />}{" "}
     </StyledBox>
   );
 };

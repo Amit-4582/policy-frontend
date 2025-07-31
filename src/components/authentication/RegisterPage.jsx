@@ -9,17 +9,16 @@ import {
   Container,
   InputAdornment,
   IconButton,
-  Link,
 } from "@mui/material";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { useNavigate, Link as RouterLink, Link } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useDispatch } from "react-redux";
 import { toast } from "react-hot-toast";
-import { loginUser } from "../../features/authentication-module/authActions";
+import { registerUser } from "../../features/authentication-module/authActions";
 
-// Styled container for the signup page
-const SignUpContainer = styled(Container)(({ theme }) => ({
+// Styled container for the register page
+const RegisterContainer = styled(Container)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
@@ -58,7 +57,7 @@ const ErrorMessage = styled(Typography)(({ theme }) => ({
   marginTop: theme.spacing(0.5),
 }));
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const {
     register,
     handleSubmit,
@@ -81,29 +80,129 @@ const LoginPage = () => {
 
   const onSubmit = async (data) => {
     try {
-      const result = await dispatch(loginUser(data)).unwrap();
+      const result = await dispatch(registerUser(data)).unwrap();
       if (result.success) {
-        toast.success("Login successful!");
+        toast.success("Registration successful!");
         reset();
-        navigate("/policy-management");
+        navigate("/login");
       }
     } catch (error) {
       console.log("Error ", error);
-      toast.error("Sign up failed. Please try again.");
+      toast.error("Registration failed. Please try again.");
     }
   };
 
   return (
-    <SignUpContainer>
+    <RegisterContainer>
       <FormWrapper>
         <Typography
           variant="h4"
           align="center"
           sx={{ fontWeight: "bold", color: "#1e293b", mb: 4 }}
         >
-          Welcome!
+          Register
         </Typography>
         <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+          <TextField
+            fullWidth
+            label="Name"
+            variant="outlined"
+            margin="normal"
+            error={!!errors.name}
+            {...register("name", {
+              required: "Name is required",
+              pattern: {
+                value: /^[A-Za-z\s]{2,}$/,
+                message:
+                  "Name must contain only letters and be at least 2 characters",
+              },
+            })}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+                "&:hover fieldset": {
+                  borderColor: "#3b82f6",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#3b82f6",
+                },
+              },
+            }}
+          />
+          {errors.name && <ErrorMessage>{errors.name.message}</ErrorMessage>}
+
+          <TextField
+            fullWidth
+            label="Date of Birth"
+            variant="outlined"
+            margin="normal"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            error={!!errors.dob}
+            {...register("dob", {
+              required: "Date of Birth is required",
+              validate: {
+                validDate: (value) => {
+                  const today = new Date();
+                  const inputDate = new Date(value);
+                  return (
+                    inputDate < today || "Date of Birth cannot be in the future"
+                  );
+                },
+                oldEnough: (value) => {
+                  const minAgeDate = new Date();
+                  minAgeDate.setFullYear(minAgeDate.getFullYear() - 13);
+                  return (
+                    new Date(value) <= minAgeDate ||
+                    "You must be at least 13 years old"
+                  );
+                },
+              },
+            })}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+                "&:hover fieldset": {
+                  borderColor: "#3b82f6",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#3b82f6",
+                },
+              },
+            }}
+          />
+          {errors.dob && <ErrorMessage>{errors.dob.message}</ErrorMessage>}
+
+          <TextField
+            fullWidth
+            label="Contact Number"
+            variant="outlined"
+            margin="normal"
+            type="tel"
+            error={!!errors.contactNo}
+            {...register("contactNo", {
+              required: "Contact Number is required",
+              pattern: {
+                value: /^\+?[1-9]\d{1,14}$/,
+                message: "Invalid phone number format",
+              },
+            })}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+                "&:hover fieldset": {
+                  borderColor: "#3b82f6",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#3b82f6",
+                },
+              },
+            }}
+          />
+          {errors.contactNo && (
+            <ErrorMessage>{errors.contactNo.message}</ErrorMessage>
+          )}
+
           <TextField
             fullWidth
             label="Email"
@@ -146,6 +245,11 @@ const LoginPage = () => {
               minLength: {
                 value: 8,
                 message: "Password must be at least 8 characters long",
+              },
+              pattern: {
+                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                message:
+                  "Password must include uppercase, lowercase, number, and special character",
               },
             })}
             InputProps={{
@@ -210,23 +314,19 @@ const LoginPage = () => {
                 },
               }}
             >
-              Login
+              Submit
             </Button>
           </ButtonContainer>
           <Typography align="center" sx={{ mt: 2 }}>
-            Don't have an account?{" "}
-            <Link
-              component={RouterLink}
-              to="/register"
-              sx={{ color: "#3b82f6" }}
-            >
-              Register
+            Already have an account?{" "}
+            <Link component={RouterLink} to="/login" sx={{ color: "#3b82f6" }}>
+              Login
             </Link>
           </Typography>
         </Box>
       </FormWrapper>
-    </SignUpContainer>
+    </RegisterContainer>
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

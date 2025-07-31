@@ -25,7 +25,6 @@ import {
   Dashboard as DashboardIcon,
   ChevronLeft as ChevronLeftIcon,
   AccountCircle as AccountCircleIcon,
-  People as EmployeesIcon,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
 import { NavLink, useLocation, Outlet, useNavigate } from "react-router-dom";
@@ -241,7 +240,6 @@ const Layout = () => {
       path: "/policy-management",
       icon: <DashboardIcon />,
     },
-    { text: "Illustration", path: "/illustration", icon: <EmployeesIcon /> },
   ];
 
   const drawerContent = (
