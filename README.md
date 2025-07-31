@@ -1,70 +1,103 @@
-# Getting Started with Create React App
+# Policy Insurance -  Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is the frontend for the Policy Insurance application, built with ReactJs, axios, MUI library. It provides a List of Policies Data and which user can create a new policy, Also we have a list of illustration data components.
+This README provides detailed, step-by-step instructions to set up and run the application locally on an Ubuntu system.
 
-## Available Scripts
+## Prerequisites
 
-In the project directory, you can run:
+Before setting up the project, ensure you have the following installed:
 
-### `npm start`
+* **Node.js** : Version 18.x or higher (LTS recommended)
+* **npm** : Comes bundled with Node.js
+* **Git** : For cloning the repository
+* **Text Editor** : (e.g., VS Code, for editing configuration files)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Setup Instructions
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Follow these steps to set up and run the AI Avatar frontend application on your Ubuntu machine.
 
-### `npm test`
+### 1. Clone the Repository
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Clone the project repository from GitHub to your local machine.
 
-### `npm run build`
+```bash
+git clone https://github.com/Amit-4582/policy-frontend.git
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Go to the directory
+```bash
+cd policy-frontend
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 3. Install Project Dependencies
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Install the required Node.js dependencies listed in `package.json`.
 
-### `npm run eject`
+```bash
+npm install
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+This will install common React dependencies such as `react`, `react-dom`, `axios`, and others. If you encounter issues, ensure `package-lock.json` is present, or delete it and rerun `npm install`.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 4. Create and Configure Environment File
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+The frontend uses a `.env` file to manage environment-specific configuration, such as API URLs.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### 4.1 Create `.env` File
 
-## Learn More
+Create a `.env` file in the project root:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+touch .env
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#### 4.2 Add Environment Variables
 
-### Code Splitting
+Open the `.env` file in a text editor (e.g., `nano`):
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+nano .env
+```
 
-### Analyzing the Bundle Size
+Add the following configuration:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```
+# API
+REACT_APP_NODE_API_URL=http://localhost:8080/api/v1
+```
 
-### Making a Progressive Web App
+Save and close the file (e.g., in `nano`, press `Ctrl+O`, `Enter`, then `Ctrl+X`).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+#### 4.3 Secure the `.env` File
 
-### Advanced Configuration
+Restrict access to the `.env` file:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```bash
+chmod 600 .env
+```
 
-### Deployment
+#### 4.4 Notes on Environment Variables
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+* The `REACT_APP_` prefix is required for React environment variables to be accessible in the application via `process.env.REACT_APP_*`.
+* Ensure the API URLs (`REACT_APP_NODE_API_URL`) are correct and accessible. These URLs appear to use ngrok, which may be temporary. Check the backend documentation or repository for the latest API URLs.
+* If additional environment variables are required (e.g., for authentication or other services), consult the repository's documentation.
 
-### `npm run build` fails to minify
+### 5. Start the Application
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Run the application using the scripts defined in `package.json`. Assuming a standard React setup, the following commands are typically available.
+
+* **Development Environment** :
+
+```bash
+  npm start
+```
+
+  This starts the development server, typically on `http://localhost:3000`. Open a browser and navigate to this URL to view the application.
+
+### 6. Test the Application
+
+1. **Access the Frontend** :
+   After running `npm start`, open `http://localhost:3000` in a browser. Check the browser's developer console (F12) for any errors related to API calls or rendering.
+2. **Check Repository Documentation** :
+   Refer to the repository's documentation or `src/` folder for specific routes, components, or features to test.
+
