@@ -10,6 +10,7 @@ import {
   InputAdornment,
   IconButton,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useDispatch } from "react-redux";
@@ -67,6 +68,7 @@ const LoginPage = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleTogglePassword = () => {
     setShowPassword((prev) => !prev);
@@ -82,9 +84,11 @@ const LoginPage = () => {
       if (result.success) {
         toast.success("Sign up successful!");
         reset();
+        navigate("/policy-management");
       }
     } catch (error) {
       console.log("Error ", error);
+      toast.error("Sign up failed. Please try again.");
     }
   };
 
